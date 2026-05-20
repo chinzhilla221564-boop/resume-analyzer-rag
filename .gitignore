@@ -1,0 +1,22 @@
+# Create .gitignore to exclude unnecessary files
+@"
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.DS_Store
+users_db.json
+*.log
+.env
+.vscode/
+.idea/
+*.db
+*.sqlite
+"@ | Out-File -FilePath .gitignore -Encoding UTF8

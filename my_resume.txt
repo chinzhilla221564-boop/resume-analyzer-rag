@@ -1,0 +1,16 @@
+JOHN SMITH - Software Engineer
+
+SKILLS:
+- Python (5 years)
+- JavaScript/React
+- SQL/PostgreSQL
+- AWS Cloud
+- Docker/Kubernetes
+
+EXPERIENCE:
+Senior Developer | Tech Corp (2021-Present)
+- Built APIs serving 1M+ users
+- Reduced costs by 30%
+
+EDUCATION:
+B.S. Computer Science, University of Technology (2018)
