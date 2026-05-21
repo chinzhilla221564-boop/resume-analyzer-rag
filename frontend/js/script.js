@@ -2,7 +2,7 @@
 // RESUME AI - MAIN JAVASCRIPT (FIXED)
 // ========================================
 
-const BACKEND_URL = 'https://caring-rebirth.up.railway.app';
+const BACKEND_URL = 'https://humble-happiness.up.railway.app';
 let currentResult = null;
 let analysisHistory = [];
 let authToken = localStorage.getItem('authToken');
