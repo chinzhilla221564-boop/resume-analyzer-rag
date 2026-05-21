@@ -19,15 +19,26 @@ app = FastAPI()
 init_db()
 
 # ============================================
-# CORS CONFIGURATION - MUST BE FIRST
+# CORS CONFIGURATION - FIXED
 # ============================================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now
+    allow_origins=[
+        "https://chinzhilla221564-boop.github.io",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
 )
+
+# Add OPTIONS handler for all routes
+@app.options("/{path:path}")
+async def options_handler(request, path: str):
+    return Response(status_code=200)
 
 # ============================================
 # HEALTH & ROOT ROUTES
@@ -44,6 +55,7 @@ async def root():
 # Secret key for JWT
 SECRET_KEY = "your-secret-key-resume-ai-2025"
 ALGORITHM = "HS256"
+
 
 # ============================================
 # STATIC FILES MOUNTING
