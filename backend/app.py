@@ -14,7 +14,13 @@ from typing import Optional
 from backend.database import load_users, save_users, hash_password, init_db
 
 app = FastAPI()
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy", "message": "API is running"}
 
+@app.get("/")
+async def root():
+    return {"message": "AI Resume Analyzer API", "status": "running"}
 # Initialize database
 init_db()
 
