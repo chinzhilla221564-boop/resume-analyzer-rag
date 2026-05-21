@@ -31,7 +31,12 @@ ALGORITHM = "HS256"
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://chinzhilla221564-boop.github.io",
+        "https://chinzhilla221564-boop.github.io/",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
