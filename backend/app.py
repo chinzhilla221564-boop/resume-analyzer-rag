@@ -1,7 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import tempfile
 import os
@@ -46,23 +45,6 @@ async def root():
 SECRET_KEY = "your-secret-key-resume-ai-2025"
 ALGORITHM = "HS256"
 
-
-# ============================================
-# STATIC FILES MOUNTING
-# ============================================
-frontend_path = Path(__file__).parent.parent / "frontend"
-css_path = frontend_path / "css"
-js_path = frontend_path / "js"
-
-css_path.mkdir(parents=True, exist_ok=True)
-js_path.mkdir(parents=True, exist_ok=True)
-
-# Mount static directories
-app.mount("/css", StaticFiles(directory=str(css_path)), name="css")
-app.mount("/js", StaticFiles(directory=str(js_path)), name="js")
-
-print(f"✅ CSS mounted from: {css_path}")
-print(f"✅ JS mounted from: {js_path}")
 
 # ============================================
 # USER DATABASE (Persistent)
