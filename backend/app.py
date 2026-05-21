@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,13 +14,7 @@ from typing import Optional
 from backend.database import load_users, save_users, hash_password, init_db
 
 app = FastAPI()
-@app.get("/api/health")
-async def health_check():
-    return {"status": "healthy", "message": "API is running"}
 
-@app.get("/")
-async def root():
-    return {"message": "AI Resume Analyzer API", "status": "running"}
 # Initialize database
 init_db()
 
@@ -28,7 +22,7 @@ init_db()
 SECRET_KEY = "your-secret-key-resume-ai-2025"
 ALGORITHM = "HS256"
 
-# Enable CORS
+# Enable CORS - MUST be before routes
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -38,9 +32,26 @@ app.add_middleware(
         "http://127.0.0.1:8000"
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Handle preflight requests
+@app.options("/{path:path}")
+async def options_handler(request, path: str):
+    return Response(status_code=200)
+
+# ============================================
+# HEALTH & ROOT ROUTES
+# ============================================
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy", "message": "API is running"}
+
+@app.get("/")
+async def root():
+    return {"message": "AI Resume Analyzer API", "status": "running"}
 
 # ============================================
 # STATIC FILES MOUNTING
@@ -205,13 +216,6 @@ def extract_text_from_file(file_path, file_extension):
             text = f.read()
     
     return text
-
-@app.get("/")
-async def root():
-    index_path = Path(__file__).parent.parent / "frontend" / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
-    return HTMLResponse("<h1>Frontend not found</h1>")
 
 @app.post("/api/upload")
 async def upload(file: UploadFile = File(...), token: str = None):
