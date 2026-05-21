@@ -11,7 +11,7 @@ import docx
 import jwt
 from datetime import datetime, timedelta
 from typing import Optional
-from database import load_users, save_users, hash_password, init_db
+from backend.database import load_users, save_users, hash_password, init_db
 
 app = FastAPI()
 
