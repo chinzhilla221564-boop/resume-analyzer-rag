@@ -1,6 +1,6 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Response, Request
+from fastapi import FastAPI, UploadFile, File, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import tempfile
@@ -9,39 +9,64 @@ from pathlib import Path
 import PyPDF2
 import docx
 import jwt
+import json
 from datetime import datetime, timedelta
 from typing import Optional
-from backend.database import load_users, save_users, hash_password, init_db
+import hashlib
 
 app = FastAPI()
+
+# ============================================
+# DATABASE FUNCTIONS (No external file needed)
+# ============================================
+DB_PATH = Path(__file__).parent / "users_db.json"
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def load_users():
+    if DB_PATH.exists():
+        with open(DB_PATH, 'r') as f:
+            return json.load(f)
+    return {}
+
+def save_users(users):
+    with open(DB_PATH, 'w') as f:
+        json.dump(users, f, indent=2)
+
+def init_db():
+    if not DB_PATH.exists():
+        save_users({})
+        print("✅ Database created")
 
 # Initialize database
 init_db()
 
 # ============================================
-# FORCE CORS HEADERS ON EVERY RESPONSE
+# CORS CONFIGURATION
 # ============================================
-@app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "https://chinzhilla221564-boop.github.io"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept"
-    return response
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://chinzhilla221564-boop.github.io",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
 
-# Handle OPTIONS requests directly
+# Handle OPTIONS requests
 @app.options("/{path:path}")
 async def options_handler(path: str):
-    return Response(
-        status_code=200,
-        headers={
-            "Access-Control-Allow-Origin": "https://chinzhilla221564-boop.github.io",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept",
-        }
-    )
+    return Response(status_code=200, headers={
+        "Access-Control-Allow-Origin": "https://chinzhilla221564-boop.github.io",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+    })
 
 # ============================================
 # HEALTH & ROOT ROUTES
@@ -55,7 +80,6 @@ async def health_check():
 async def root():
     return {"message": "AI Resume Analyzer API", "status": "running"}
 
-# Secret key for JWT
 SECRET_KEY = "your-secret-key-resume-ai-2025"
 ALGORITHM = "HS256"
 
@@ -66,14 +90,10 @@ frontend_path = Path(__file__).parent.parent / "frontend"
 css_path = frontend_path / "css"
 js_path = frontend_path / "js"
 
-css_path.mkdir(parents=True, exist_ok=True)
-js_path.mkdir(parents=True, exist_ok=True)
-
-app.mount("/css", StaticFiles(directory=str(css_path)), name="css")
-app.mount("/js", StaticFiles(directory=str(js_path)), name="js")
-
-print(f"✅ CSS mounted from: {css_path}")
-print(f"✅ JS mounted from: {js_path}")
+if css_path.exists():
+    app.mount("/css", StaticFiles(directory=str(css_path)), name="css")
+if js_path.exists():
+    app.mount("/js", StaticFiles(directory=str(js_path)), name="js")
 
 # ============================================
 # USER DATABASE (Persistent)
@@ -127,7 +147,7 @@ async def register(user: UserRegister):
     save_users(users)
     token = create_token(user.email)
     
-    return JSONResponse(content={
+    return {
         "success": True,
         "message": "Registration successful!",
         "token": token,
@@ -135,7 +155,7 @@ async def register(user: UserRegister):
             "name": user.name,
             "email": user.email
         }
-    })
+    }
 
 @app.post("/api/auth/login")
 async def login(user: UserLogin):
@@ -149,7 +169,7 @@ async def login(user: UserLogin):
     
     token = create_token(user.email)
     
-    return JSONResponse(content={
+    return {
         "success": True,
         "message": "Login successful!",
         "token": token,
@@ -157,7 +177,7 @@ async def login(user: UserLogin):
             "name": users[user.email]["name"],
             "email": user.email
         }
-    })
+    }
 
 @app.post("/api/auth/logout")
 async def logout():
@@ -179,7 +199,7 @@ async def verify(token: str):
     }
 
 # ============================================
-# RESUME STORAGE (Persistent per user)
+# RESUME STORAGE
 # ============================================
 resume_data = {}
 
@@ -309,16 +329,12 @@ async def analyze(req: JobDesc):
             users[email]["resume_history"] = users[email]["resume_history"][:10]
         save_users(users)
     
-    # HTML analysis (shortened for brevity - keep your existing HTML generation)
+    # Quick analysis response
     analysis_html = f"""
-<div style="font-family: system-ui, -apple-system, sans-serif;">
-<div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 12px;">
-    <div style="font-size: 11px; opacity: 0.7;">MATCH SCORE</div>
-    <div style="font-size: 42px; font-weight: 700; line-height: 1;">{score}%</div>
-    <div style="font-size: 12px;">{'🎉 Excellent' if score >= 80 else '👍 Good' if score >= 60 else '⚠️ Needs Work'}</div>
-</div>
-<div style="text-align: center; font-size: 12px;">📊 {total_matched} out of {total_keywords} keywords matched</div>
-<div style="text-align: center; font-size: 10px; color: #64748b; margin-top: 12px;">🔍 RAG Analysis</div>
+<div style="text-align: center; padding: 20px;">
+    <div style="font-size: 48px; font-weight: bold; color: #6366f1;">{score}%</div>
+    <div style="margin: 10px 0;">Match Score</div>
+    <div>Missing Keywords: {', '.join(all_missing[:8])}</div>
 </div>
 """
     
@@ -334,9 +350,9 @@ async def analyze(req: JobDesc):
 
 if __name__ == "__main__":
     import uvicorn
-    print("\n" + "="*60)
+    port = int(os.environ.get("PORT", 8000))
+    print(f"\n{'='*60}")
     print("🚀 AI Resume Analyzer is running!")
-    print("📱 Open: http://127.0.0.1:8000")
-    print("💾 User data is now PERSISTENT (saved to users_db.json)")
-    print("="*60 + "\n")
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    print(f"📱 Open: http://localhost:{port}")
+    print(f"{'='*60}\n")
+    uvicorn.run(app, host="0.0.0.0", port=port)

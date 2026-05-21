@@ -1,7 +1,6 @@
-# Core Backend (ONLY what you need)
-fastapi==0.104.1
-uvicorn==0.24.0
-python-multipart==0.0.6
-PyPDF2==3.0.0
-python-docx==1.1.0
-PyJWT==2.8.0
+fastapi
+uvicorn
+python-multipart
+PyPDF2
+python-docx
+PyJWT
