@@ -1,4 +1,6 @@
 fastapi
 uvicorn
-PyJWT
 python-multipart
+PyPDF2
+python-docx
+PyJWT
