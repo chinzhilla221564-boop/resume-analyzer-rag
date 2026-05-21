@@ -2,7 +2,7 @@
 // RESUME AI - MAIN JAVASCRIPT (COMPLETE)
 // ========================================
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = 'https://resume-analyzer-rag-production.up.railway.app';
 let currentResult = null;
 let analysisHistory = [];
 let authToken = localStorage.getItem('authToken');
