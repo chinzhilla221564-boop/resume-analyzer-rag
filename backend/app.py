@@ -41,6 +41,11 @@ async def health_check():
 async def root():
     return {"message": "AI Resume Analyzer API", "status": "running"}
 
+# Catch-all OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    return {"message": "OK"}
+
 # Secret key for JWT
 SECRET_KEY = "your-secret-key-resume-ai-2025"
 ALGORITHM = "HS256"
