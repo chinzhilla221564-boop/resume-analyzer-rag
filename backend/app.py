@@ -19,10 +19,7 @@ app = FastAPI()
 init_db()
 
 # ============================================
-# CORS CONFIGURATION - FIXED VERSION
-# ============================================
-# ============================================
-# CORS CONFIGURATION - FIXED VERSION
+# CORS CONFIGURATION
 # ============================================
 app.add_middleware(
     CORSMiddleware,
@@ -34,9 +31,9 @@ app.add_middleware(
         "http://127.0.0.1:8000",
         "http://localhost:3000",
     ],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
