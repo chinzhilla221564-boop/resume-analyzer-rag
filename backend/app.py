@@ -19,12 +19,12 @@ app = FastAPI()
 init_db()
 
 # ============================================
-# CORS CONFIGURATION - FIXED
+# CORS CONFIGURATION - FIXED VERSION
 # ============================================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://chinzhilla221564-boop.github.io",
+        "https://chinzhil2210564-boop.github.io",
         "http://localhost:5500",
         "http://127.0.0.1:5500",
         "http://localhost:8000",
@@ -32,13 +32,10 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "Accept"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin"],
+    expose_headers=["Content-Type"],
 )
 
-# Add OPTIONS handler for all routes
-@app.options("/{path:path}")
-async def options_handler(request, path: str):
-    return Response(status_code=200)
 
 # ============================================
 # HEALTH & ROOT ROUTES
