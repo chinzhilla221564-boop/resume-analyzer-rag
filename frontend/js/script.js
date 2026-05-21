@@ -2,7 +2,7 @@
 // RESUME AI - MAIN JAVASCRIPT (FIXED)
 // ========================================
 
-const BACKEND_URL = 'https://resume-analyzer-rag-production.up.railway.app';
+const BACKEND_URL = 'https://caring-rebirth.up.railway.app';
 let currentResult = null;
 let analysisHistory = [];
 let authToken = localStorage.getItem('authToken');
