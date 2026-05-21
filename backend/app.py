@@ -18,28 +18,16 @@ app = FastAPI()
 # Initialize database
 init_db()
 
-# Secret key for JWT
-SECRET_KEY = "your-secret-key-resume-ai-2025"
-ALGORITHM = "HS256"
-
-# Enable CORS - MUST be before routes
+# ============================================
+# CORS CONFIGURATION - MUST BE FIRST
+# ============================================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://chinzhilla221564-boop.github.io",
-        "https://chinzhilla221564-boop.github.io/",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000"
-    ],
+    allow_origins=["*"],  # Allow all origins for now
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Handle preflight requests
-@app.options("/{path:path}")
-async def options_handler(request, path: str):
-    return Response(status_code=200)
 
 # ============================================
 # HEALTH & ROOT ROUTES
@@ -52,6 +40,10 @@ async def health_check():
 @app.get("/")
 async def root():
     return {"message": "AI Resume Analyzer API", "status": "running"}
+
+# Secret key for JWT
+SECRET_KEY = "your-secret-key-resume-ai-2025"
+ALGORITHM = "HS256"
 
 # ============================================
 # STATIC FILES MOUNTING
