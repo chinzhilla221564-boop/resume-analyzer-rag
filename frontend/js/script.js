@@ -1,5 +1,5 @@
 // ========================================
-// RESUME AI - MAIN JAVASCRIPT (COMPLETE)
+// RESUME AI - MAIN JAVASCRIPT (FIXED)
 // ========================================
 
 const BACKEND_URL = 'https://resume-analyzer-rag-production.up.railway.app';
@@ -59,34 +59,23 @@ function stopRobotAnalysis() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('ResumeAI loaded');
     
-    // Load saved history
     loadHistory();
-    
-    // Update stats on home page
     updateHomeStats();
     displayRecentHistory();
-    
-    // Setup navigation
     setupNavigation();
     
-    // Setup analyzer if on analyzer page
     if (document.getElementById('uploadArea')) {
         setupUpload();
         setupTextarea();
     }
     
-    // Setup FAQ toggles
     setupFAQ();
     
-    // Check authentication
     if (authToken) {
         verifyToken();
     }
     
-    // Update navbar buttons
     updateNavbarButtons();
-    
-    // Setup stars animation
     createStars();
     createShootingStars();
     createAIIcons();
@@ -121,11 +110,9 @@ function setupNavigation() {
                 updateHomeStats();
                 displayRecentHistory();
             } else if (page === 'analyzer' && analyzerContainer) {
-                // Check authentication before showing analyzer
                 if (checkAuthAndRedirect()) {
                     analyzerContainer.style.display = 'block';
                 } else {
-                    // Stay on home page
                     homeContainer.style.display = 'block';
                     document.querySelector('.nav-link[data-page="home"]').classList.add('active');
                     this.classList.remove('active');
@@ -702,6 +689,7 @@ async function registerUser() {
             showToast(data.detail || 'Registration failed', 'error');
         }
     } catch (error) {
+        console.error('Register error:', error);
         showToast('Error: ' + error.message, 'error');
     }
 }
@@ -737,6 +725,7 @@ async function loginUser() {
             showToast(data.detail || 'Invalid credentials', 'error');
         }
     } catch (error) {
+        console.error('Login error:', error);
         showToast('Error: ' + error.message, 'error');
     }
 }
@@ -752,8 +741,6 @@ async function logout() {
     localStorage.removeItem('currentUser');
     showToast('Logged out successfully', 'success');
     updateNavbarButtons();
-    
-    // Redirect to home page
     switchToHome();
 }
 
