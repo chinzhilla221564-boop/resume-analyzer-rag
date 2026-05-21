@@ -8,9 +8,9 @@ streamlit-option-menu>=0.3.6
 
 # RAG & Vector Search
 langchain>=0.1.0
-faiss-cpu==1.7.4
+faiss-cpu>=1.7.4
 chromadb>=0.4.22
-sentence-transformers==2.2.2
+sentence-transformers>=2.2.2
 
 # Document Processing
 PyPDF2>=3.0.0
