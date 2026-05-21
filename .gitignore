@@ -1,22 +1,30 @@
-# Create .gitignore to exclude unnecessary files
-@"
+# Python
 venv/
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
 .Python
-*.so
-*.egg
-*.egg-info/
+
+# Build
 dist/
 build/
-.DS_Store
-users_db.json
-*.log
+*.egg-info/
+*.egg
+
+# Environment
 .env
+
+# Editor
 .vscode/
 .idea/
+
+# Logs and databases
+*.log
 *.db
 *.sqlite
-"@ | Out-File -FilePath .gitignore -Encoding UTF8
+users_db.json
+
+# OS files
+.DS_Store
+Thumbs.db
