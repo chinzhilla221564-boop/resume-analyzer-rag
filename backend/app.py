@@ -21,6 +21,9 @@ init_db()
 # ============================================
 # CORS CONFIGURATION - FIXED VERSION
 # ============================================
+# ============================================
+# CORS CONFIGURATION - FIXED VERSION
+# ============================================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -30,12 +33,10 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "http://localhost:3000",
-        "*"
     ],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
 )
 
 
